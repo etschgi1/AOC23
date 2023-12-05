@@ -1,3 +1,4 @@
+import numpy as np
 with open('4/input.txt') as f:
     data = f.readlines()
 
@@ -28,7 +29,7 @@ def getwinningtotal(data):
             sum_ += 2**(c-1)
     return sum_
 
-#part 2 rec winning
+#part winning
 def getnrwins(card):
     c = 0
     for n in card[0]:
@@ -36,16 +37,17 @@ def getnrwins(card):
             c +=1
     return c
 
-def count_cards(original_, data):
-    sum_ = 0
-    for card in data: 
-        wins = getnrwins(card)
-        start_ = (card[2]+1)
-        sum_ += count_cards(original_, original_[start_:(start_+wins)])
-    return sum_
+def count_cards(original_):
+    counter = np.ones(len(original_))
+    for c, card in enumerate(original_): 
+        nr_wins = getnrwins(card)
+        for i in range(1, nr_wins+1):
+            counter[c+i] += counter[c]
+    return sum(counter)
+    
 #part1
 print(getwinningtotal(parseinput(data)))
 #part 2
 original_ = parseinput(data, cardid=True)
-total_cards = len(original_) + count_cards(original_, original_)
+total_cards = count_cards(original_)
 print(total_cards)
